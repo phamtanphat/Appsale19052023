@@ -99,7 +99,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text_view_navigate_register_activity"
+        android:id="@+id/text_view_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
