@@ -10,4 +10,7 @@ interface ApiService {
 
     @POST("user/sign-in")
     fun signIn(@Body map: HashMap<String, Any>): Call<AppResponseDTO<UserDTO>>
+
+    @POST("user/sign-up")
+    fun signUp(@Body map: HashMap<String, Any>): Call<AppResponseDTO<UserDTO>>
 }

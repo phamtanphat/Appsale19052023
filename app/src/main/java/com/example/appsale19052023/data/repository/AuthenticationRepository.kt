@@ -14,4 +14,20 @@ object AuthenticationRepository {
         map["password"] = password
         return apiService.signIn(map)
     }
+
+    fun requestSignUp(
+        email: String,
+        password: String,
+        name: String,
+        phone: String,
+        address: String
+    ): Call<AppResponseDTO<UserDTO>> {
+        val map = HashMap<String, Any>()
+        map["email"] = email
+        map["password"] = password
+        map["name"] = name
+        map["phone"] = phone
+        map["address"] = address
+        return apiService.signUp(map)
+    }
 }
