@@ -44,7 +44,11 @@ class SignInActivity : AppCompatActivity() {
 
         signInViewModel.getUser().observe(this) {
             when (it) {
-                is AppResource.Success -> ToastUtils.showToast(this, "Login success!!!")
+                is AppResource.Success -> {
+                    ToastUtils.showToast(this, "Login success!!!")
+                    startActivity(Intent(this, ProductActivity::class.java))
+                    finish()
+                }
                 is AppResource.Error -> ToastUtils.showToast(this, it.error)
             }
         }
