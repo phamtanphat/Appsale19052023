@@ -59,7 +59,7 @@ class SignInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            signInViewModel.executeSignIn(email, password)
+            signInViewModel.executeSignIn(email, password, this)
         }
 
         displayTextViewRegister()

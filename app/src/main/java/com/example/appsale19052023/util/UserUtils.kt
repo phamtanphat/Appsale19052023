@@ -11,7 +11,7 @@ class UserUtils {
                 email = userDTO?.email ?: "",
                 name = userDTO?.name ?: "",
                 phone = userDTO?.phone ?: "",
-                token = userDTO?.email ?: "",
+                token = userDTO?.token ?: "",
             )
         }
     }

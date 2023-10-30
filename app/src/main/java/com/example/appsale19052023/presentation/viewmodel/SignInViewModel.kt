@@ -1,10 +1,12 @@
 package com.example.appsale19052023.presentation.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appsale19052023.common.AppSharePreference
 import com.example.appsale19052023.data.api.AppResource
 import com.example.appsale19052023.data.api.dto.AppResponseDTO
 import com.example.appsale19052023.data.api.dto.UserDTO
@@ -28,7 +30,11 @@ class SignInViewModel : ViewModel() {
     fun getLoading(): LiveData<Boolean> = loadingLiveData
     fun getUser(): LiveData<AppResource<User>> = userLiveData
 
-    fun executeSignIn(email: String, password: String) {
+    fun executeSignIn(
+        email: String,
+        password: String,
+        context: Context
+    ) {
         loadingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
             AuthenticationRepository
@@ -44,6 +50,11 @@ class SignInViewModel : ViewModel() {
                             userLiveData.value = AppResource.Error(jsonError.optString("message"))
                         } else {
                             val user = UserUtils.parseUserDTO(response.body()?.data)
+                            // Save token when login success
+                            AppSharePreference(context).saveString(
+                                key = AppSharePreference.TOKEN_KEY,
+                                value = user.token
+                            )
                             userLiveData.value = AppResource.Success(user)
                         }
 

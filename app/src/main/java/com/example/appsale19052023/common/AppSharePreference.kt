@@ -9,6 +9,10 @@ class AppSharePreference(
 ) {
     private val SHARED_PREFERENCE_NAME = "app-cache"
 
+    companion object {
+        val TOKEN_KEY = "token"
+    }
+
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(SHARED_PREFERENCE_NAME, AppCompatActivity.MODE_PRIVATE)
     }
