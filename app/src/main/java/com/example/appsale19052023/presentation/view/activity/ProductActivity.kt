@@ -1,10 +1,9 @@
 package com.example.appsale19052023.presentation.view.activity
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +19,12 @@ class ProductActivity : AppCompatActivity() {
     private lateinit var productRecyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private lateinit var layoutLoading: LinearLayout
+    private var toolBar : Toolbar? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
 
-        productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
+        productViewModel = ViewModelProvider(this)[ProductViewModel::class.java]
         initView()
         observerData()
         event()
@@ -50,8 +50,12 @@ class ProductActivity : AppCompatActivity() {
     private fun initView() {
         productRecyclerView = findViewById(R.id.recycler_view_product)
         layoutLoading = findViewById(R.id.layout_loading)
+        toolBar = findViewById(R.id.toolbar_home)
         productAdapter = ProductAdapter(context = this)
         productRecyclerView.adapter = productAdapter
         productRecyclerView.setHasFixedSize(true)
+
+        setSupportActionBar(toolBar)
+        supportActionBar?.title = "Product"
     }
 }
