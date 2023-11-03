@@ -9,9 +9,11 @@ import android.text.method.LinkMovementMethod
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isGone
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.appsale19052023.R
 import com.example.appsale19052023.data.api.AppResource
+import com.example.appsale19052023.presentation.viewmodel.ProductViewModel
 import com.example.appsale19052023.presentation.viewmodel.SignInViewModel
 import com.example.appsale19052023.util.SpannedUtils
 import com.example.appsale19052023.util.ToastUtils
@@ -29,7 +31,11 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin)
-        signInViewModel = ViewModelProvider(this)[SignInViewModel::class.java]
+        signInViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory{
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return SignInViewModel(this@SignInActivity) as T
+            }
+        })[SignInViewModel::class.java]
 
         initView()
         observerData()

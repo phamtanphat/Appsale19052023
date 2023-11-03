@@ -1,5 +1,6 @@
 package com.example.appsale19052023.presentation.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,8 +24,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ProductViewModel : ViewModel() {
+class ProductViewModel(context: Context) : ViewModel() {
 
+    private val productRepository = ProductRepository(context)
+    private val cartRepository = CartRepository(context)
     private val loadingLiveData = MutableLiveData<Boolean>()
     private val listProductsLiveData = MutableLiveData<AppResource<List<Product>>>()
     private val cartLiveData = MutableLiveData<AppResource<Cart>>()
@@ -35,7 +38,7 @@ class ProductViewModel : ViewModel() {
     fun executeGetListProducts() {
         loadingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            ProductRepository
+            productRepository
                 .requestListProducts()
                 .enqueue(object : Callback<AppResponseDTO<List<ProductDTO>>> {
                     override fun onResponse(
@@ -69,8 +72,45 @@ class ProductViewModel : ViewModel() {
     fun executeGetCart() {
         loadingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            CartRepository
+            cartRepository
                 .requestCart()
+                .enqueue(object : Callback<AppResponseDTO<CartDTO>> {
+                    override fun onResponse(
+                        call: Call<AppResponseDTO<CartDTO>>,
+                        response: Response<AppResponseDTO<CartDTO>>
+                    ) {
+                        if (response.errorBody() != null) {
+                            if (response.code() == 500) {
+                                cartLiveData.value = AppResource.Success(Cart())
+                            } else {
+                                val errorResponse = response.errorBody()?.string() ?: "{}"
+                                val jsonError = JSONObject(errorResponse)
+                                cartLiveData.value =
+                                    AppResource.Error(jsonError.optString("message"))
+                            }
+                        } else {
+                            val cart = CartUtils.parseCartDTO(response.body()?.data)
+                            cartLiveData.value = AppResource.Success(cart)
+                        }
+
+                        loadingLiveData.value = false
+                    }
+
+                    override fun onFailure(
+                        call: Call<AppResponseDTO<CartDTO>>,
+                        t: Throwable
+                    ) {
+                        cartLiveData.value = AppResource.Error(t.message.toString())
+                    }
+                })
+        }
+    }
+
+    fun executeAddToCart(idProduct: String) {
+        loadingLiveData.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository
+                .requestAddToCart(idProduct)
                 .enqueue(object : Callback<AppResponseDTO<CartDTO>> {
                     override fun onResponse(
                         call: Call<AppResponseDTO<CartDTO>>,

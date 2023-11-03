@@ -9,9 +9,11 @@ import android.text.method.LinkMovementMethod
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isGone
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.appsale19052023.R
 import com.example.appsale19052023.data.api.AppResource
+import com.example.appsale19052023.presentation.viewmodel.ProductViewModel
 import com.example.appsale19052023.presentation.viewmodel.RegisterViewModel
 import com.example.appsale19052023.presentation.viewmodel.SignInViewModel
 import com.example.appsale19052023.util.SpannedUtils
@@ -34,7 +36,11 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        registerViewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
+        registerViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory{
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return RegisterViewModel(this@RegisterActivity) as T
+            }
+        })[RegisterViewModel::class.java]
 
         initView()
         observerData()

@@ -23,8 +23,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignInViewModel : ViewModel() {
+class SignInViewModel(context: Context) : ViewModel() {
 
+    private var authenticationRepository = AuthenticationRepository(context)
     private val loadingLiveData = MutableLiveData<Boolean>()
     private val userLiveData = MutableLiveData<AppResource<User>>()
     fun getLoading(): LiveData<Boolean> = loadingLiveData
@@ -37,7 +38,7 @@ class SignInViewModel : ViewModel() {
     ) {
         loadingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            AuthenticationRepository
+            authenticationRepository
                 .requestSignIn(email, password)
                 .enqueue(object : Callback<AppResponseDTO<UserDTO>> {
                     override fun onResponse(

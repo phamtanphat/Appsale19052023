@@ -56,7 +56,7 @@ class ProductAdapter(
         init {
             buttonAdd.setOnClickListener {
                 if (onItemClickProduct != null) {
-                    onItemClickProduct!!.onClick(adapterPosition)
+                    onItemClickProduct?.onClick(adapterPosition)
                 }
             }
         }

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appsale19052023.R
@@ -32,7 +33,11 @@ class ProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
 
-        productViewModel = ViewModelProvider(this)[ProductViewModel::class.java]
+        productViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory{
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ProductViewModel(this@ProductActivity) as T
+            }
+        })[ProductViewModel::class.java]
         initView()
         observerData()
         event()
@@ -42,9 +47,14 @@ class ProductActivity : AppCompatActivity() {
         productViewModel.executeGetListProducts()
         productViewModel.executeGetCart()
 
-        cartItemArea?.setOnClickListener {
-
-        }
+        productAdapter.setOnItemClickFood(object : ProductAdapter.OnItemClickProduct{
+            override fun onClick(position: Int) {
+                val idProduct = productAdapter.getListProducts().getOrNull(index = position)?.id ?: ""
+                if (idProduct.isNotEmpty()) {
+                    productViewModel.executeAddToCart(idProduct)
+                }
+            }
+        })
     }
 
     private fun observerData() {

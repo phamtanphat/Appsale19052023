@@ -1,5 +1,6 @@
 package com.example.appsale19052023.presentation.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,8 +22,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(context: Context) : ViewModel() {
 
+    private val authenticationRepository = AuthenticationRepository(context)
     private val loadingLiveData = MutableLiveData<Boolean>()
     private val userLiveData = MutableLiveData<AppResource<User>>()
     fun getLoading(): LiveData<Boolean> = loadingLiveData
@@ -37,7 +39,7 @@ class RegisterViewModel : ViewModel() {
     ) {
         loadingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            AuthenticationRepository
+            authenticationRepository
                 .requestSignUp(email, password, name, phone, address)
                 .enqueue(object : Callback<AppResponseDTO<UserDTO>> {
                     override fun onResponse(
