@@ -1,6 +1,7 @@
 package com.example.appsale19052023.data.api
 
 import com.example.appsale19052023.data.api.dto.AppResponseDTO
+import com.example.appsale19052023.data.api.dto.CartDTO
 import com.example.appsale19052023.data.api.dto.ProductDTO
 import com.example.appsale19052023.data.api.dto.UserDTO
 import retrofit2.Call
@@ -18,4 +19,7 @@ interface ApiService {
 
     @GET("product")
     fun getListProducts(): Call<AppResponseDTO<List<ProductDTO>>>
+
+    @GET("cart")
+    fun getCart(): Call<AppResponseDTO<CartDTO>>
 }

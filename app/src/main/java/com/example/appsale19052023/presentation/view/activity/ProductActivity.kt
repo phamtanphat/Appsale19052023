@@ -9,10 +9,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appsale19052023.R
 import com.example.appsale19052023.data.api.AppResource
+import com.example.appsale19052023.data.model.Cart
 import com.example.appsale19052023.presentation.view.adapter.ProductAdapter
 import com.example.appsale19052023.presentation.viewmodel.ProductViewModel
 import com.example.appsale19052023.util.ToastUtils
@@ -23,7 +25,9 @@ class ProductActivity : AppCompatActivity() {
     private lateinit var productRecyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private lateinit var layoutLoading: LinearLayout
-    private var toolBar : Toolbar? = null
+    private var cartItemArea: FrameLayout? = null
+    private var textBadge: TextView? = null
+    private var toolBar: Toolbar? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
@@ -36,6 +40,11 @@ class ProductActivity : AppCompatActivity() {
 
     private fun event() {
         productViewModel.executeGetListProducts()
+        productViewModel.executeGetCart()
+
+        cartItemArea?.setOnClickListener {
+
+        }
     }
 
     private fun observerData() {
@@ -46,6 +55,13 @@ class ProductActivity : AppCompatActivity() {
         productViewModel.getListProducts().observe(this) {
             when (it) {
                 is AppResource.Success -> productAdapter.updateListProduct(it.data)
+                is AppResource.Error -> ToastUtils.showToast(this, it.error)
+            }
+        }
+
+        productViewModel.getCart().observe(this) {
+            when (it) {
+                is AppResource.Success -> updateBadge(it.data ?: Cart())
                 is AppResource.Error -> ToastUtils.showToast(this, it.error)
             }
         }
@@ -65,14 +81,9 @@ class ProductActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_product, menu)
-
         val rootView = menu?.findItem(R.id.item_menu_cart)?.actionView
-        val cartArea = rootView?.findViewById<FrameLayout>(R.id.frame_layout_cart_area)
-        val textBadge = rootView?.findViewById<TextView>(R.id.text_cart_badge)
-
-        cartArea?.setOnClickListener {
-            ToastUtils.showToast(this@ProductActivity, "Click icon cart")
-        }
+        cartItemArea = rootView?.findViewById(R.id.frame_layout_cart_area)
+        textBadge = rootView?.findViewById(R.id.text_cart_badge)
         return true
     }
 
@@ -84,5 +95,18 @@ class ProductActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    private fun updateBadge(cart: Cart) {
+        val totalProduct = cart.listProduct.size
+        if (totalProduct == 0) {
+            textBadge?.isGone = true
+        } else {
+            textBadge?.isVisible = true
+            textBadge?.text = cart.listProduct
+                .map { it.quantity }
+                .reduce { acc, quantity -> acc + quantity }
+                .toString()
+        }
     }
 }
