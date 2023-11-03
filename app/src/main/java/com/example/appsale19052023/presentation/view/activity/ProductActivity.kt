@@ -1,7 +1,11 @@
 package com.example.appsale19052023.presentation.view.activity
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
@@ -57,5 +61,28 @@ class ProductActivity : AppCompatActivity() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.title = "Product"
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_product, menu)
+
+        val rootView = menu?.findItem(R.id.item_menu_cart)?.actionView
+        val cartArea = rootView?.findViewById<FrameLayout>(R.id.frame_layout_cart_area)
+        val textBadge = rootView?.findViewById<TextView>(R.id.text_cart_badge)
+
+        cartArea?.setOnClickListener {
+            ToastUtils.showToast(this@ProductActivity, "Click icon cart")
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_menu_history_order -> {
+                ToastUtils.showToast(this@ProductActivity, "Click history card")
+            }
+        }
+
+        return true
     }
 }
